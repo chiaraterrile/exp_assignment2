@@ -4,6 +4,7 @@ from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point, Twist
 from math import atan2
+import math
 
 x = 0.0
 y = 0.0
@@ -30,33 +31,47 @@ speed = Twist()
 r = rospy.Rate(4)
 
 goal = Point()
-goal.x = -2
-goal.y = 5
-inc_x = goal.x - x 
-inc_y = goal.y - y 
+goal.x = -3
+goal.y = 3
+#inc_x = goal.x - x 
+#inc_y = goal.y - y 
+
+#angle_to_goal = atan2(inc_y,inc_x)
+
+
+inc_x = goal.x- x 
+inc_y = goal.y - y
 
 angle_to_goal = atan2(inc_y,inc_x)
+dist_to_goal = math.sqrt(pow((goal.x-x),2)+pow((goal.x-x),2))
 
-while not rospy.is_shutdown():
-    inc_x = goal.x - x 
-    inc_y = goal.y - y 
+#while not rospy.is_shutdown():
+while dist_to_goal > 0.1 :
+    inc_x = goal.x- x 
+    inc_y = goal.y - y
 
-    #angle_to_goal = atan2(inc_y,inc_x)
-
+    angle_to_goal = atan2(inc_y,inc_x)
+    dist_to_goal = math.sqrt(pow((goal.x-x),2)+pow((goal.x-x),2))
+    print(dist_to_goal)
     if abs(angle_to_goal - theta) > 0.1:
         speed.linear.x = 0.0
         speed.angular.z = 1
     else :
         speed.linear.x = 0.5
         speed.angular.z = 0.0
-        angle_to_goal = theta 
-    if (x == goal.x )and (y == goal.y ):
-            speed.linear.x = 0.0
-            speed.angular.z = 0.0
-
-
-    pub.publish(speed)
+        #angle_to_goal = theta 
     
-
+            
+    
+    pub.publish(speed)
     r.sleep()
+
+speed.linear.x = 0.0
+speed.angular.z = 0.0
+pub.publish(speed)         
+#speed.linear.x = 0.0
+#speed.angular.z = 0.0
+#pub.publish(speed)
+
+   
     

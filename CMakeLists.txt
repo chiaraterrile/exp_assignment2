@@ -177,7 +177,10 @@ include_directories(
 ## in contrast to setup.py, you can choose the destination
  install(PROGRAMS
    scripts/go_to_point_ball.py
-   scripts/movement.py
+   scripts/sub.py
+   scripts/movement2.py
+   scripts/pub.py
+   scripts/state_machine.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
@@ -214,3 +217,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+catkin_install_python(PROGRAMS scripts/pub.py scripts/sub.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+

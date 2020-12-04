@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import roslib
-import random
 import rospy
 import smach
 import smach_ros
@@ -12,11 +11,9 @@ from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point, Twist
 from math import atan2
-import math
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist, Point
-from nav_msgs.msg import Odometry
 from tf import transformations
 import math
 
@@ -36,13 +33,13 @@ yaw_ = 0
 state_ = 0
 # goal
 desired_position_sleep_ = Point()
-desired_position_sleep_.x = 1
-desired_position_sleep_.y = 1
+desired_position_sleep_.x = -6
+desired_position_sleep_.y = 8
 desired_position_sleep_.z = 0
 
 desired_position_normal_ = Point()
-desired_position_normal_.x = 2
-desired_position_normal_.y = 2
+desired_position_normal_.x = random.randint(-6,7)
+desired_position_normal_.y = random.randint(-8,8)
 desired_position_normal_.z = 0
 # parameters
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
@@ -175,17 +172,20 @@ class RandomlyGoing(smach.State):
         pub = rospy.Publisher('robot/cmd_vel', Twist, queue_size=1)
 
         sub_odom = rospy.Subscriber('robot/odom', Odometry, clbk_odom)
+        print ('Going to : ', desired_position_normal_)
 
         rate = rospy.Rate(20)
         while not rospy.is_shutdown():
                 if state_ == 0: #where the robot fix its position in order to reach the target
                         fix_yaw(desired_position_normal_)
+                        
                 elif state_ == 1: #the robot just go ahead
                         go_straight_ahead(desired_position_normal_)
                 elif state_ == 2: #final state, once the goal is reached
                         
                         done()
-                       
+                        print('reached position')
+                        time.sleep(5)
                         return user_action()
                 else:
                         rospy.logerr('Unknown state!')
@@ -222,17 +222,20 @@ class Sleeping(smach.State):
         pub = rospy.Publisher('robot/cmd_vel', Twist, queue_size=1)
 
         sub_odom = rospy.Subscriber('robot/odom', Odometry, clbk_odom)
+        print ('Going to sleep ')
 
         rate = rospy.Rate(20)
         while not rospy.is_shutdown():
                 if state_ == 0: #where the robot fix its position in order to reach the target
                         fix_yaw(desired_position_sleep_)
+                        
                 elif state_ == 1: #the robot just go ahead
                         go_straight_ahead(desired_position_sleep_)
                 elif state_ == 2: #final state, once the goal is reached
                         
                         done()
-                        #state_ = 0
+                        print('reached home')
+                        time.sleep(10)
                         return ('normal')
                 else:
                         rospy.logerr('Unknown state!')

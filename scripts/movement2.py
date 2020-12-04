@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist, Point
 from nav_msgs.msg import Odometry
 from tf import transformations
 import math
+import random
 # it's not an action server, it's just a node which gives the possibility to set a goal and then it will frive the robot toward this position
 # robot state variables
 position_ = Point()
@@ -14,8 +15,8 @@ yaw_ = 0
 state_ = 0
 # goal
 desired_position_ = Point()
-desired_position_.x = -2
-desired_position_.y = 3
+desired_position_.x = 7
+desired_position_.y = 8
 desired_position_.z = 0
 # parameters
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
@@ -139,7 +140,10 @@ def main():
             rospy.logerr('Unknown state!')
 
         rate.sleep()
-
-
+        x_r = random.randint(-6,7)
+        y_r = random.randint(-8,8)
+	    
+        print('xr = ', x_r)
+        print('yr = ', y_r)
 if __name__ == '__main__':
     main()

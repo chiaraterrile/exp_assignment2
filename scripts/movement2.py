@@ -140,10 +140,6 @@ def main():
             rospy.logerr('Unknown state!')
 
         rate.sleep()
-        x_r = random.randint(-6,7)
-        y_r = random.randint(-8,8)
-	    
-        print('xr = ', x_r)
-        print('yr = ', y_r)
+        
 if __name__ == '__main__':
     main()

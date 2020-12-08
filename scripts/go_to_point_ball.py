@@ -10,6 +10,7 @@ import math
 import actionlib
 import actionlib.msg
 import exp_assignment2.msg
+from std_msgs.msg import String
 
 # robot state variables
 position_ = Point()
@@ -33,6 +34,7 @@ z_back = 0.25
 # publisher
 pub = None
 pubz = None
+pub_play = None
 
 # action_server
 act_s = None
@@ -96,7 +98,7 @@ def done():
     twist_msg.linear.x = 0
     twist_msg.linear.y = 0
     pub.publish(twist_msg)
-
+    
 
 def planning(goal):
 
@@ -129,6 +131,10 @@ def planning(goal):
             feedback.stat = "Target reached!"
             feedback.position = pose_
             act_s.publish_feedback(feedback)
+            pub_play = rospy.Publisher('chatter', String, queue_size=10)
+            data = "play"
+            pub_play.publish(data)
+            rospy.loginfo(data)
             done()
             break
         else:
@@ -136,8 +142,10 @@ def planning(goal):
 
         rate.sleep()
     if success:
+        
         rospy.loginfo('Goal: Succeeded!')
         act_s.set_succeeded(result)
+        
 
 
 def main():
@@ -145,11 +153,12 @@ def main():
     rospy.init_node('go_to_point')
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
     pubz = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=1)
+    
     sub_odom = rospy.Subscriber('odom', Odometry, clbk_odom)
     act_s = actionlib.SimpleActionServer(
         '/reaching_goal', exp_assignment2.msg.PlanningAction, planning, auto_start=False)
     act_s.start()
-
+    
     rate = rospy.Rate(20)
 
     while not rospy.is_shutdown():

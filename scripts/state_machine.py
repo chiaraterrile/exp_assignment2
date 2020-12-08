@@ -16,17 +16,20 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist, Point
 from tf import transformations
 import math
+import numpy as np
+from scipy.ndimage import filters
+import imutils
+import cv2
+from sensor_msgs.msg import CompressedImage
 
-flag_play = 0
-message = " "
 
-#si blocca allo stato due e non continua con la state machine
 
-#! /usr/bin/env python
-# import ros stuff
+
+####################################### for the navigation #######################################
 
 # it's not an action server, it's just a node which gives the possibility to set a goal and then it will frive the robot toward this position
 # robot state variables
+end_process = 0
 position_ = Point()
 yaw_ = 0
 # machine state
@@ -38,8 +41,10 @@ desired_position_sleep_.y = 8
 desired_position_sleep_.z = 0
 
 desired_position_normal_ = Point()
-desired_position_normal_.x = random.randint(-6,7)
-desired_position_normal_.y = random.randint(-8,8)
+#desired_position_normal_.x = random.randint(-6,7)
+#desired_position_normal_.y = random.randint(-8,8)
+desired_position_normal_.x = -5
+desired_position_normal_.y = 6
 desired_position_normal_.z = 0
 # parameters
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
@@ -87,6 +92,8 @@ def normalize_angle(angle):
 
 
 def fix_yaw(des_pos):
+    
+
     global yaw_, pub, yaw_precision_2_, state_
     desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
     err_yaw = normalize_angle(desired_yaw - yaw_)
@@ -141,13 +148,124 @@ def done():
     twist_msg.angular.z = 0
     pub.publish(twist_msg)
     change_state(0)
+####################################### for tracking the ball #######################################
+VERBOSE = False
+def call_play(data):
+   	 	
+            global end_process
+            global message
+            message = data.data
+            #checking that there's actually a message from the publisher
+            if message == "1" :
+                end_process = 1
+                
+            else :
+                end_process = 0
+            #print(end_process)
+
+class image_feature:
+    global end_process 
+    def __init__(self):
+        '''Initialize ros publisher, ros subscriber'''
+       
+     # topic where we publish
+        self.image_pub = rospy.Publisher("robot/output/image_raw/compressed",
+                                         CompressedImage, queue_size=1)
+        self.vel_pub = rospy.Publisher("robot/cmd_vel",
+                                       Twist, queue_size=1)
+
+        # subscribed Topic
+        self.subscriber = rospy.Subscriber("robot/camera1/image_raw/compressed",
+                                           CompressedImage, self.callback,  queue_size=1)
+    
+
+    def callback(self, ros_data):
+        '''Callback function of subscribed topic. 
+        Here images get converted and features detected'''
+        if VERBOSE:
+            print ('received image of type: "%s"' % ros_data.format)
+        
+        
+        #### direct conversion to CV2 ####
+        np_arr = np.fromstring(ros_data.data, np.uint8)
+        image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)  # OpenCV >= 3.0:
+
+        greenLower = (50, 50, 20) #used to define the color we want to find
+        greenUpper = (70, 255, 255)
+
+        blurred = cv2.GaussianBlur(image_np, (11, 11), 0)
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, greenLower,greenUpper)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        #cv2.imshow('mask', mask)
+        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+                                cv2.CHAIN_APPROX_SIMPLE)
+        cnts = imutils.grab_contours(cnts)
+        center = None
+        # only proceed if at least one contour was found
+
+        if len(cnts) > 0:
+            # find the largest contour in the mask, then use
+            # it to compute the minimum enclosing circle and
+            # centroid
+            c = max(cnts, key=cv2.contourArea)
+            ((x, y), radius) = cv2.minEnclosingCircle(c)
+            M = cv2.moments(c)
+            center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+
+            # only proceed if the radius meets a minimum size
+            
+            if radius > 10:
+                # draw the circle and centroid on the frame,
+                # then update the list of tracked points
+                
+                cv2.circle(image_np, (int(x), int(y)), int(radius),
+                           (0, 255, 255), 2)
+                cv2.circle(image_np, center, 5, (0, 0, 255), -1)
+                vel = Twist()
+                
+                vel.angular.z = -0.002*(center[0]-400) #inversely prop to the distance from the center of the actual image and the center of the detected image
+                vel.linear.x = -0.01*(radius-100) #inv prop to the difference btw the radious of the detected object and a fixed radious set to 100
+                # if radious become smaller, also the detected obj is smaller -> far from the desired position -> linear velocity will become positive
+                self.vel_pub.publish(vel)
+                
+
+            else: #if the radious is smaller than 10, I will give you a linear velocity to get close to the object
+                vel = Twist()
+                
+                vel.linear.x = 0.5
+                self.vel_pub.publish(vel)
+           
+        else: # if I'm not detecting obj, I rotate in order to find it
+            vel = Twist()
+            #rate = rospy.Rate(20)
+            vel.angular.z = 0.5
+            self.vel_pub.publish(vel)
+            #rate.sleep
+            time.sleep(6.2*3.14/0.5)
+            vel.angular.z = 0
+            self.vel_pub.publish(vel)
+            time.sleep(2)
+
+        if (abs(vel.linear.x ) < 0.1) and (abs(vel.angular.z) < 0.1):
+                pub_play = rospy.Publisher('end_play', String, queue_size=10) 
+                msg = "1"
+                pub_play.publish(msg)
+        
+        cv2.imshow('window', image_np)
+        
+        cv2.waitKey(2)
+        
+        #cv2.waitKey(1)
+        
+        
+####################################### state machine functions ##########################
 
 def user_action():
-			
-			global flag_play 
-			global message
-                 
-			return ('sleep')     
+    global end_process
+    global message
+    return ('play')
 
 # define state RandomlyGoing
 class RandomlyGoing(smach.State):
@@ -160,13 +278,11 @@ class RandomlyGoing(smach.State):
                              output_keys=['randomlygoing_counter_out'])
         
     def execute(self, userdata):
+    
         
-	#x = random.randint(0,10)
-	#y =random.randint(0,10)
-	#random_coordinates = "x= "+str(x)+" y= "+str(y)
-        
-        global pub, active_
+        global pub, active_,end_process
 # in the main you have a kind of finite state machine
+        end_process = 0
         
 
         pub = rospy.Publisher('robot/cmd_vel', Twist, queue_size=1)
@@ -176,6 +292,7 @@ class RandomlyGoing(smach.State):
 
         rate = rospy.Rate(20)
         while not rospy.is_shutdown():
+                #cv2.destroyAllWindows()  
                 if state_ == 0: #where the robot fix its position in order to reach the target
                         fix_yaw(desired_position_normal_)
                         
@@ -186,7 +303,8 @@ class RandomlyGoing(smach.State):
                         done()
                         print('reached position')
                         time.sleep(5)
-                        return user_action()
+                        #cv2.destroyAllWindows()  
+                        return ('sleep')
                 else:
                         rospy.logerr('Unknown state!')
 
@@ -206,7 +324,7 @@ class Sleeping(smach.State):
 	
 
         smach.State.__init__(self, 
-			     outcomes=['normal'],
+			     outcomes=['play'],
                              input_keys=['sleeping_counter_in'],
                              output_keys=['sleeping_counter_out'])
         
@@ -236,7 +354,7 @@ class Sleeping(smach.State):
                         done()
                         print('reached home')
                         time.sleep(10)
-                        return ('normal')
+                        return ('play')
                 else:
                         rospy.logerr('Unknown state!')
 
@@ -255,33 +373,47 @@ class Sleeping(smach.State):
 # define state Playing
 class Playing(smach.State):
     def __init__(self):
-	global flag_play
+	
 	global message
-	global person
+    
         smach.State.__init__(self, 
-                             outcomes=['normal'],
+                             outcomes=['normal','play'],
                              input_keys=['playing_counter_in'],
                              output_keys=['playing_counter_out'])
        
 
     def execute(self, userdata):
-       
-        #defining the publisher
-   	#pub = rospy.Publisher('target', String, queue_size=10)
-	#target = person
-   	#pub.publish(target)
-	#time.sleep(5)
-    	#target = message
-   	#pub.publish(target)
-	#time.sleep(5)
-	#target = person
-   	#pub.publish(target)
+        global end_process
+        
+        im = image_feature()
+        rate = rospy.Rate(40)
 
+        while not rospy.is_shutdown():
+                
+                rospy.Subscriber('end_play', String, call_play)
+                
+                if end_process == 1 :
+                        time.sleep(5) 
+                        #cv2.destroyAllWindows() 
+                        #cv2.waitKey(1) 
+                        #end_process = 0 
+                        cv2.destroyAllWindows()  
+                        change_state(0)
+                        return ('normal')
+
+                
+                rate.sleep() 
+                       
+        
+        
+           
+        
+        #cv2.destroyAllWindows()
         rospy.loginfo('Executing state PLAYING (users = %f)'%userdata.playing_counter_in)
         userdata.playing_counter_out = userdata.playing_counter_in + 1
-	time.sleep(10)
+	#time.sleep(10)
 	#after being in the playing state it comes back to normal
-        return ('normal')
+        #return ('normal')
         
 
 
@@ -305,14 +437,15 @@ def main():
                                           'randomlygoing_counter_out':'sm_counter'})
        
         smach.StateMachine.add('SLEEPING', Sleeping(), 
-                               transitions={'normal':'RANDOMLYGOING' 
-                                            
+                               transitions={'play':'PLAYING',
 					    },
                                remapping={'sleeping_counter_in':'sm_counter',
                                           'sleeping_counter_out':'sm_counter'})
 
         smach.StateMachine.add('PLAYING', Playing(), 
-                               transitions={'normal':'RANDOMLYGOING'}, 
+                               transitions={'normal':'RANDOMLYGOING', 
+                                            'play':'PLAYING',
+					    },
                                             
 							
                                remapping={'playing_counter_in':'sm_counter',

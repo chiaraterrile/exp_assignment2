@@ -69,4 +69,16 @@
 	<node name="position_server" pkg="exp_assignment2" type="go_to_point_ball.py" output="screen" />
   </group>
 
+    <rosparam file="$(find exp_assignment2)/config/motors_config.yaml" command="load" ns="/robot" /> <!--parameter for the config of the motor-->
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="--namespace=/robot
+        joint_state_controller
+        joint1_position_controller
+        --shutdown-timeout 3"> <!--here I have spawn all the controls which are defined in the config file-->
+    </node>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+   <remap from="joint_states" to="robot/joint_states"/>
+  </node>
+
 </launch>

@@ -183,7 +183,7 @@
    <joint name="head_joint" type="revolute">
 	    <axis xyz="0 0 1" />
       <!--<limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.0"/> -->
-      <limit effort="1000.0" lower="0" upper="0" velocity="0.0"/>
+      <limit effort="1000.0" lower="-1.8" upper="1.8" velocity="0.2"/>
 	    <origin xyz="0.05 0 0.0" rpy="0 0 0"/>
 	    <parent link="link_neck"/>
 	    <child link="link_head"/> 
@@ -222,6 +222,16 @@
 	 </joint>
 
 
-
+<!-- transmission should be associated to each joint which I want to control-->
+<transmission name="head_trans">
+	<type>transmission_interface/SimpleTransmission</type> <!--kind of transmission-->
+	<joint name="head_joint">
+		<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> <!--type of controller that I am going to use-->
+	</joint>
+	<actuator name="motor1"> 
+		<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		<mechanicalInterface>1</mechanicalInterface>
+	</actuator>
+</transmission>
 
 </robot>

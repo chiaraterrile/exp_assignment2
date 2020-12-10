@@ -7,7 +7,7 @@ import smach
 import smach_ros
 import time
 import random
-from std_msgs.msg import String
+from std_msgs.msg import String,Float64
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point, Twist
@@ -152,6 +152,9 @@ def done():
     change_state(0)
 ####################################### for tracking the ball #######################################
 VERBOSE = False
+#def call_neck_rot(data)
+    #message = data.data
+
 def call_play(data):
    	 	
             global detected_object
@@ -209,10 +212,13 @@ class image_feature:
         center = None
             # only proceed if at least one contour was found
         
+
         if len(cnts) > 0:
                 
                 msg = "1"
                 self.pub_play.publish(msg)
+                #time.sleep(2)
+                
                 # find the largest contour in the mask, then use
                 # it to compute the minimum enclosing circle and
                 # centroid
@@ -388,7 +394,9 @@ class Playing(smach.State):
     def execute(self, userdata):
         global detected_object
         #cv2.destroyAllWindows() 
-        
+        msg_right = 0.7
+        msg_left = -0.7
+        msg_center = 0.0
         print(detected_object)
         rate = rospy.Rate(20)
         #while not rospy.is_shutdown():
@@ -399,9 +407,19 @@ class Playing(smach.State):
 
                         #im = image_feature()
                         rospy.Subscriber('object', String, call_play)
+                        pub_head_rot = rospy.Publisher("robot/joint1_position_controller/command", Float64, queue_size=1)
                         print(detected_object)
                             
                         if detected_object == 1 :
+                                pub_head_rot.publish(msg_right)
+                                time.sleep(2)
+                                pub_head_rot.publish(msg_left)
+                                time.sleep(2)
+                                pub_head_rot.publish(msg_center)
+                                time.sleep(2)
+                                #msg_right = 0.0
+                                #msg_left = 0.0
+                                #msg_center = 0.0
                                 print('inizio tempo')
                                 t_end = time.time() +60 # 60
                                 rospy.Subscriber('object', String, call_play)

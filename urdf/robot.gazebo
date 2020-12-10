@@ -19,6 +19,9 @@
     <material>Gazebo/Orange</material>
   </gazebo>
 
+<gazebo reference="head_joint">
+    <provideFeedback>true</provideFeedback>
+</gazebo>
 
   <gazebo>
     <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
@@ -36,13 +39,21 @@
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
       <robotBaseFrame>link_chassis</robotBaseFrame>
+      <rosDebugLevel>na</rosDebugLevel>
+      <publishWheelTF>true</publishWheelTF>
+      <publishWheelJointState>true</publishWheelJointState>
+      <wheelAcceleration>0</wheelAcceleration>
+      <wheelTorque>5</wheelTorque>
+      <odometrySource>1</odometrySource>
+      <publishTf>1</publishTf>
     </plugin>
   </gazebo>
   
   <!-- ros_control plugin -->
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-     <!-- <robotNamespace>/robot</robotNamespace> -->
+      <robotNamespace>/robot</robotNamespace> 
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
       <legacyModeNS>true</legacyModeNS>
     </plugin>
   </gazebo>
@@ -84,6 +95,8 @@
       </plugin>
     </sensor>
   </gazebo> 
+
+
 
 
 </robot>

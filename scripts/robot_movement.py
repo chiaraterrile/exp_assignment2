@@ -15,9 +15,9 @@ yaw_ = 0
 state_ = 0
 # goal
 desired_position_ = Point()
-desired_position_.x = 7
-desired_position_.y = 8
-desired_position_.z = 0
+#desired_position_.x = 7
+#desired_position_.y = 8
+#desired_position_.z = 0
 # parameters
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
 yaw_precision_2_ = math.pi / 90  # +/- 2 degree allowed
@@ -37,7 +37,7 @@ pub = None
 def clbk_odom(msg):
     global position_
     global yaw_
-
+    
     # position
     position_ = msg.pose.pose.position
 
@@ -50,6 +50,13 @@ def clbk_odom(msg):
     euler = transformations.euler_from_quaternion(quaternion)
     yaw_ = euler[2]
 
+def clbk_position(msg):
+    
+    desired_position_.x = msg.x
+    desired_position_.y = msg.y
+    desired_position_.z = msg.z
+    print('des pos',desired_position_)
+    change_state(0)
 
 def change_state(state):
     global state_
@@ -67,7 +74,7 @@ def fix_yaw(des_pos):
     global yaw_, pub, yaw_precision_2_, state_
     desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
     err_yaw = normalize_angle(desired_yaw - yaw_)
-    rospy.loginfo(err_yaw)
+    #rospy.loginfo(err_yaw)
 
     twist_msg = Twist()
     if math.fabs(err_yaw) > yaw_precision_2_:
@@ -92,7 +99,7 @@ def go_straight_ahead(des_pos):
     err_pos = math.sqrt(pow(des_pos.y - position_.y, 2) +
                         pow(des_pos.x - position_.x, 2))
     err_yaw = normalize_angle(desired_yaw - yaw_)
-    rospy.loginfo(err_yaw)
+    #rospy.loginfo(err_yaw)
 
     if err_pos > dist_precision_:
         twist_msg = Twist()
@@ -117,27 +124,34 @@ def done():
     twist_msg.linear.x = 0
     twist_msg.angular.z = 0
     pub.publish(twist_msg)
+    #change_state(0)
+    
 
 
 def main():
     global pub, active_
 # in the main you have a kind of finite state machine
     rospy.init_node('go_to_point')
-
+    #change_state(0)
+    #desired_position_= Point()
+   
     pub = rospy.Publisher('robot/cmd_vel', Twist, queue_size=1)
-
+    #print('des pos= ',desired_position_)
     sub_odom = rospy.Subscriber('robot/odom', Odometry, clbk_odom)
 
     rate = rospy.Rate(20)
     while not rospy.is_shutdown():
+        sub_position = rospy.Subscriber('desired_position',Point,clbk_position)
         if state_ == 0: #where the robot fix its position in order to reach the target
-            fix_yaw(desired_position_)
+                fix_yaw(desired_position_)
         elif state_ == 1: #the robot just go ahead
-            go_straight_ahead(desired_position_)
+                go_straight_ahead(desired_position_)
         elif state_ == 2: #final state, once the goal is reached
-            done()
+                print('reached position')
+                state_ = 0
+                done() 
         else:
-            rospy.logerr('Unknown state!')
+                rospy.logerr('Unknown state!')
 
         rate.sleep()
         

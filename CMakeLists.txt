@@ -73,6 +73,7 @@ find_package (OpenCV REQUIRED)
  add_action_files(
    FILES
    Planning.action
+   
 #   Action2.action
  )
 
@@ -178,10 +179,11 @@ include_directories(
  install(PROGRAMS
    scripts/go_to_point_ball.py
    scripts/sub.py
-   scripts/movement2.py
+   scripts/robot_movement.py
    scripts/pub.py
    scripts/state_machine.py
    scripts/example.py
+   scripts/client.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
@@ -221,4 +223,8 @@ include_directories(
 catkin_install_python(PROGRAMS scripts/go_to_point_ball.py scripts/sub.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+catkin_install_python(PROGRAMS scripts/state_machine.py scripts/robot_movement.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 

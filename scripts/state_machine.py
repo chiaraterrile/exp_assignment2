@@ -22,19 +22,19 @@ from scipy.ndimage import filters
 import imutils
 import cv2
 from sensor_msgs.msg import CompressedImage
-
+import actionlib
+from exp_assignment2.msg import *
+from geometry_msgs.msg import Twist, Point, Pose
+from nav_msgs.msg import Odometry
 
 
 
 ####################################### for the navigation #######################################
 
-# it's not an action server, it's just a node which gives the possibility to set a goal and then it will frive the robot toward this position
-# robot state variables
-detected_object = 0
-position_ = Point()
-yaw_ = 0
-# machine state
-state_ = 0
+message = " "
+flag_play = 0
+stop = 0
+
 
 # goal
 desired_position_sleep_ = Point()
@@ -48,117 +48,17 @@ desired_position_normal_ = Point()
 desired_position_normal_.x = -5
 desired_position_normal_.y = 6
 desired_position_normal_.z = 0
-# parameters
-yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
-yaw_precision_2_ = math.pi / 90  # +/- 2 degree allowed
-dist_precision_ = 0.1
-kp_a = 3.0  # In ROS Noetic, it may be necessary to change the sign of this proportional controller
-kp_d = 0.2
-ub_a = 0.6
-lb_a = -0.5
-ub_d = 0.6
-
-# publishers
-pub = None
-
-# callbacks
-#counter_time = 0
-
-def clbk_odom(msg):
-    global position_
-    global yaw_
-
-    # position
-    position_ = msg.pose.pose.position
-
-    # yaw
-    quaternion = (
-        msg.pose.pose.orientation.x,
-        msg.pose.pose.orientation.y,
-        msg.pose.pose.orientation.z,
-        msg.pose.pose.orientation.w)
-    euler = transformations.euler_from_quaternion(quaternion)
-    yaw_ = euler[2]
 
 
-def change_state(state):
-    global state_
-    state_ = state
-    print ('State changed to [%s]' % state_)
 
-
-def normalize_angle(angle):
-    if(math.fabs(angle) > math.pi):
-        angle = angle - (2 * math.pi * angle) / (math.fabs(angle))
-    return angle
-
-
-def fix_yaw(des_pos):
-    
-
-    global yaw_, pub, yaw_precision_2_, state_
-    desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
-    err_yaw = normalize_angle(desired_yaw - yaw_)
-    #rospy.loginfo(err_yaw)
-
-    twist_msg = Twist()
-    if math.fabs(err_yaw) > yaw_precision_2_:
-        twist_msg.angular.z = kp_a*err_yaw
-        if twist_msg.angular.z > ub_a:
-            twist_msg.angular.z = ub_a
-        elif twist_msg.angular.z < lb_a:
-            twist_msg.angular.z = lb_a
-
-    pub.publish(twist_msg)
-
-    # state change conditions
-    if math.fabs(err_yaw) <= yaw_precision_2_:
-        print ('Yaw error: [%s]' % err_yaw)
-        change_state(1)
-
-
-def go_straight_ahead(des_pos):
-    global yaw_, pub, yaw_precision_, state_
-    desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
-    err_yaw = desired_yaw - yaw_
-    err_pos = math.sqrt(pow(des_pos.y - position_.y, 2) +
-                        pow(des_pos.x - position_.x, 2))
-    err_yaw = normalize_angle(desired_yaw - yaw_)
-    #rospy.loginfo(err_yaw)
-
-    if err_pos > dist_precision_:
-        twist_msg = Twist()
-        twist_msg.linear.x = 0.3
-        if twist_msg.linear.x > ub_d:
-            twist_msg.linear.x = ub_d
-
-        twist_msg.angular.z = kp_a*err_yaw
-        pub.publish(twist_msg)
-    else:
-        print ('Position error: [%s]' % err_pos)
-        change_state(2)
-
-    # state change conditions
-    if math.fabs(err_yaw) > yaw_precision_:
-        print ('Yaw error: [%s]' % err_yaw)
-        change_state(0)
-
-
-def done():
-    twist_msg = Twist()
-    twist_msg.linear.x = 0
-    twist_msg.angular.z = 0
-    pub.publish(twist_msg)
-    change_state(0)
 ####################################### for tracking the ball #######################################
 VERBOSE = False
-#def call_neck_rot(data)
-    #message = data.data
+detected_object = 0
 
 def call_play(data):
    	 	
             global detected_object
-            global message
+            
             message = data.data
             #checking that there's actually a message from the publisher
             if message == "1" :
@@ -167,6 +67,17 @@ def call_play(data):
             else :
                 detected_object = 0
             #print('end_proc = ' ,detected_object)
+def call_stop(data):
+   	 	
+            global stop
+            
+            msg = data.data
+            #checking that there's actually a message from the publisher
+            if msg == "1" :
+                stop = 1
+                
+            else :
+                stop = 0
 
 class image_feature:
     global detected_object,detected_object #counter_time
@@ -178,17 +89,18 @@ class image_feature:
                                          CompressedImage, queue_size=1)
         self.vel_pub = rospy.Publisher("robot/cmd_vel",
                                        Twist, queue_size=1)
-        #self.pub_play = rospy.Publisher('object', String, queue_size=10) 
-        # subscribed Topic
+        
         self.subscriber = rospy.Subscriber("robot/camera1/image_raw/compressed",
                                            CompressedImage, self.callback,  queue_size=1)
         
-        self.pub_play = rospy.Publisher('object', String, queue_size=10) 
+        #self.pub_play = rospy.Publisher('/robot/object', String, queue_size=10) 
+        #self.pub_stop = rospy.Publisher('play_stop', String, queue_size=10) 
         
     def callback(self, ros_data):
-        #cv2.destroyAllWindows()
+        
         detected_object = 0
-        #counter_timer = 0
+        pub_play = rospy.Publisher('/robot/object', String, queue_size=10)
+        pub_stop = rospy.Publisher('play_stop', String, queue_size=10) 
         if VERBOSE:
                 print ('received image of type: "%s"' % ros_data.format)
             
@@ -216,8 +128,7 @@ class image_feature:
         if len(cnts) > 0:
                 
                 msg = "1"
-                self.pub_play.publish(msg)
-                #time.sleep(2)
+                pub_play.publish(msg)
                 
                 # find the largest contour in the mask, then use
                 # it to compute the minimum enclosing circle and
@@ -249,12 +160,16 @@ class image_feature:
                     
                     vel.linear.x = 0.5
                     self.vel_pub.publish(vel)
-                #cv2.imshow('window', image_np)
+                if abs(vel.linear.x) < 0.01 :
+                    stop_msg = "1"
+                    pub_stop.publish(stop_msg)
+                    vel.angular.z = 0
+                    vel.linear.x = 0
+                    self.vel_pub.publish(vel)
+
         else: # if I'm not detecting obj, I rotate in order to find it
-                #cv2.imshow('window', image_np)
-                #pub_play = rospy.Publisher('object', String, queue_size=10) 
                 msg = "0"
-                self.pub_play.publish(msg)
+                pub_play.publish(msg)
                 vel = Twist()
                 #rate = rospy.Rate(20)
                 vel.angular.z = 0.5
@@ -263,16 +178,37 @@ class image_feature:
         cv2.imshow('window', image_np)
             
         cv2.waitKey(2)
-        #cv2.destroyAllWindows()
+        
             
        
         
 ####################################### state machine functions ##########################
 
+def callback_play(data):
+   	 	
+		global flag_play
+		global message
+		message = data.data
+		#checking that there's actually a message from the publisher
+		if message == "start play" :
+			flag_play = 1
+		else :
+			flag_play = 0
+		
+
 def user_action():
-    global detected_object
+			
+    global flag_play 
     global message
-    return ('play')
+
+    rospy.Subscriber("/ball/chatter", String, callback_play)
+    #print(flag_play)
+    if flag_play == 1 :
+        #flag_play = 0
+        return('play')
+    else : 
+        return random.choice(['normal','sleep'])
+				
 
 # define state RandomlyGoing
 class RandomlyGoing(smach.State):
@@ -287,37 +223,32 @@ class RandomlyGoing(smach.State):
     def execute(self, userdata):
     
         
-        global pub, active_,detected_object
-# in the main you have a kind of finite state machine
-        detected_object = 0
-        
-        
-        pub = rospy.Publisher('robot/cmd_vel', Twist, queue_size=1)
+        rospy.Subscriber("/ball/chatter", String, callback_play)
 
-        sub_odom = rospy.Subscriber('robot/odom', Odometry, clbk_odom)
-        print ('Going to : ', desired_position_normal_)
-
-        rate = rospy.Rate(20)
-        while not rospy.is_shutdown():
+        if flag_play != 1 :
+                
+                #print('flag = ' ,flag_play)
                 #cv2.destroyAllWindows()  
-                if state_ == 0: #where the robot fix its position in order to reach the target
-                        fix_yaw(desired_position_normal_)
-                        
-                elif state_ == 1: #the robot just go ahead
-                        go_straight_ahead(desired_position_normal_)
-                elif state_ == 2: #final state, once the goal is reached
-                        
-                        done()
-                        print('reached position')
-                        time.sleep(5)
-                        change_state(0)
-                        #cv2.destroyAllWindows()  
-                        return ('sleep')
-                else:
-                        rospy.logerr('Unknown state!')
+                 #where the robot fix its position in order to reach the target
+                client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
 
-                rate.sleep()
-   	
+    
+                client.wait_for_server()
+
+                
+                goal = exp_assignment2.msg.PlanningGoal()
+                goal.target_pose.pose.position.x = -5
+                goal.target_pose.pose.position.y = 5
+            
+                client.send_goal(goal)
+
+                
+                client.wait_for_result()
+
+                #return client.get_result()  # A FibonacciResult
+                return user_action()
+                
+        return ('play')
         
 
         rospy.loginfo('Executing state RANDOMLYGOING (users = %f)'%userdata.randomlygoing_counter_in)
@@ -332,43 +263,35 @@ class Sleeping(smach.State):
 	
 
         smach.State.__init__(self, 
-			     outcomes=['play'],
+			     outcomes=['play','normal','sleep'],
                              input_keys=['sleeping_counter_in'],
                              output_keys=['sleeping_counter_out'])
         
     def execute(self, userdata):
-        
-        #state_ = 0
+
+        rospy.Subscriber("/ball/chatter", String, callback_play)
+        if flag_play != 1 :
+            
+            
+            client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
+
     
-        global pub, active_,detected_object #counter_time
-        
-# in the main you have a kind of finite state machine
-        
+            client.wait_for_server()
 
-        pub = rospy.Publisher('robot/cmd_vel', Twist, queue_size=1)
+                
+            goal = exp_assignment2.msg.PlanningGoal()
+            goal.target_pose.pose.position.x = -6
+            goal.target_pose.pose.position.y = 8
+            
+            client.send_goal(goal)
 
-        sub_odom = rospy.Subscriber('robot/odom', Odometry, clbk_odom)
-        print ('Going to sleep ')
-
-        rate = rospy.Rate(20)
-        while not rospy.is_shutdown():
-            if state_ == 0: #where the robot fix its position in order to reach the target
-                            fix_yaw(desired_position_sleep_)
-                            
-            elif state_ == 1: #the robot just go ahead
-                            go_straight_ahead(desired_position_sleep_)
-            elif state_ == 2: #final state, once the goal is reached
-                            
-                            done()
-                            print('reached home')
-                            time.sleep(5)
-                            cv2.destroyAllWindows()
-                            return ('play')
-            else:
-                            rospy.logerr('Unknown state!')
-
-            rate.sleep() 
-        
+                
+            client.wait_for_result()
+            time.sleep(10)
+            #return client.get_result()  # A FibonacciResult
+            return user_action()
+                
+        return ('play')
    	
 	#remains in the sleeping state for a certain amount of time
         
@@ -392,7 +315,7 @@ class Playing(smach.State):
        
 
     def execute(self, userdata):
-        global detected_object
+        global detected_object,stop
         #cv2.destroyAllWindows() 
         msg_right = 0.7
         msg_left = -0.7
@@ -402,33 +325,32 @@ class Playing(smach.State):
         #while not rospy.is_shutdown():
         im = image_feature()
         print('inizio tempo')
-        t_end = time.time() + 60 # 60
+        t_end = time.time() + 10 # 60
         while time.time() < t_end :
 
                         #im = image_feature()
                         rospy.Subscriber('object', String, call_play)
                         pub_head_rot = rospy.Publisher("robot/joint1_position_controller/command", Float64, queue_size=1)
-                        print(detected_object)
+                        
                             
                         if detected_object == 1 :
-                                pub_head_rot.publish(msg_right)
-                                time.sleep(2)
-                                pub_head_rot.publish(msg_left)
-                                time.sleep(2)
-                                pub_head_rot.publish(msg_center)
-                                time.sleep(2)
-                                #msg_right = 0.0
-                                #msg_left = 0.0
-                                #msg_center = 0.0
+                                
                                 print('inizio tempo')
-                                t_end = time.time() +60 # 60
+                                t_end = time.time() +10 # 60
                                 rospy.Subscriber('object', String, call_play)
-                            
+                                rospy.Subscriber('play_stop', String, call_stop)
+                                if stop == 1 :
+                                        pub_head_rot.publish(msg_right)
+                                        time.sleep(5)
+                                        pub_head_rot.publish(msg_left)
+                                        time.sleep(5)
+                                        pub_head_rot.publish(msg_center)
+                                        #time.sleep(5)
+                        
                         #rate.sleep() 
                            
         cv2.destroyAllWindows()               
         print('no object found')
-        change_state(0)
         return ('normal')
         #im = image_feature()     
 
@@ -452,13 +374,7 @@ def main():
     with sm:
         # Add states to the container
        
-        smach.StateMachine.add('PLAYING', Playing(), 
-                               transitions={'normal':'RANDOMLYGOING'
-					    },
-                                            
-							
-                               remapping={'playing_counter_in':'sm_counter',
-                                          'plying_counter_out':'sm_counter'})
+        
 
         smach.StateMachine.add('RANDOMLYGOING', RandomlyGoing(), 
                                transitions={'normal':'RANDOMLYGOING', 
@@ -466,10 +382,20 @@ def main():
 					    'play':'PLAYING'},
                                remapping={'randomlygoing_counter_in':'sm_counter', 
                                           'randomlygoing_counter_out':'sm_counter'})
+        
+
+        smach.StateMachine.add('PLAYING', Playing(), 
+                               transitions={'normal':'RANDOMLYGOING'
+					    },
+                                            
+							
+                               remapping={'playing_counter_in':'sm_counter',
+                                          'plying_counter_out':'sm_counter'})
        
         smach.StateMachine.add('SLEEPING', Sleeping(), 
-                               transitions={'play':'PLAYING'
-					    },
+                               transitions={'normal':'RANDOMLYGOING', 
+                                            'sleep':'SLEEPING',
+					    'play':'PLAYING'},
                                remapping={'sleeping_counter_in':'sm_counter',
                                           'sleeping_counter_out':'sm_counter'})
 

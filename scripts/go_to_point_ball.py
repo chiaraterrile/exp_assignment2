@@ -1,5 +1,10 @@
 #! /usr/bin/env python
-# import ros stuff
+"""!
+@section Description
+This scripts is a ROS action server that makes the ball moving given the position and the orientation of the goal
+"""
+
+# Import 
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist, Point, Pose
@@ -12,7 +17,7 @@ import actionlib.msg
 import exp_assignment2.msg
 from std_msgs.msg import String
 
-message = " "
+
 # robot state variables
 position_ = Point()
 pose_ = Pose()
@@ -110,11 +115,8 @@ def done():
     twist_msg.linear.x = 0
     twist_msg.linear.y = 0
     pub.publish(twist_msg)
-    pub_play = rospy.Publisher('/ball/chatter', String, queue_size=10)
-    pub_play.publish(message)
-    pub_play = rospy.Publisher('/ball/velocity', String, queue_size=10)
-    ciao = "vel zero"
-    pub_play.publish(ciao)
+    rate = rospy.Rate(20) # 10hz
+    
 def planning(goal):
 
     global state_, desired_position_
@@ -166,7 +168,7 @@ def main():
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
     pubz = rospy.Publisher('/gazebo/set_link_state', LinkState, queue_size=1)
     
-    #rospy.loginfo(data) 
+     
     sub_odom = rospy.Subscriber('odom', Odometry, clbk_odom)
     act_s = actionlib.SimpleActionServer(
         '/reaching_goal', exp_assignment2.msg.PlanningAction, planning, auto_start=False)

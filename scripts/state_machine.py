@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+"""!
+@author Terrile Chiara
+@mainpage Assignment 2 ExpRob
+@package exp_assignment2
+@section Description
+This scripts is a ROS node that implements a FSM that according to what detects the camera switch to one state or another
+"""
+
+# Imports
 import roslib
 import time
 import rospy
@@ -28,63 +37,45 @@ from geometry_msgs.msg import Twist, Point, Pose
 from nav_msgs.msg import Odometry
 
 
+# Global variables
 
-####################################### for the navigation #######################################
-
-message = " "
-flag_play = 0
-stop = 0
-
-
-# goal
+## Coordinates of the home position in the sleep state
 desired_position_sleep_ = Point()
 desired_position_sleep_.x = -6
 desired_position_sleep_.y = 8
 desired_position_sleep_.z = 0
 
+## Coordinates of the position in the normal state
 desired_position_normal_ = Point()
-#desired_position_normal_.x = random.randint(-6,7)
-#desired_position_normal_.y = random.randint(-8,8)
-desired_position_normal_.x = -5
-desired_position_normal_.y = 6
-desired_position_normal_.z = 0
 
-
-
-####################################### for tracking the ball #######################################
-VERBOSE = False
+## flag that indicates wheter there's an object or not 
 detected_object = 0
 
+# Functions for tracking the ball
+
+VERBOSE = False
+
+
 def call_play(data):
-   	 	
+            """! This function is a callback that if receives '1' as message puts the flag detected_object equal to 1 """
             global detected_object
             
             message = data.data
-            #checking that there's actually a message from the publisher
+            
             if message == "1" :
                 detected_object = 1
                 
             else :
                 detected_object = 0
-            #print('end_proc = ' ,detected_object)
-def call_stop(data):
-   	 	
-            global stop
-            
-            msg = data.data
-            #checking that there's actually a message from the publisher
-            if msg == "1" :
-                stop = 1
-                
-            else :
-                stop = 0
+           
 
 class image_feature:
-    global detected_object,detected_object #counter_time
+    """! define the class for tracking the ball"""
+    global detected_object
     def __init__(self):
-        '''Initialize ros publisher, ros subscriber'''
+        """! Initialize publisher and subscriber"""
        
-     # topic where we publish
+     
         self.image_pub = rospy.Publisher("robot/output/image_raw/compressed",
                                          CompressedImage, queue_size=1)
         self.vel_pub = rospy.Publisher("robot/cmd_vel",
@@ -93,23 +84,23 @@ class image_feature:
         self.subscriber = rospy.Subscriber("robot/camera1/image_raw/compressed",
                                            CompressedImage, self.callback,  queue_size=1)
         
-        #self.pub_play = rospy.Publisher('/robot/object', String, queue_size=10) 
-        #self.pub_stop = rospy.Publisher('play_stop', String, queue_size=10) 
+        ##topic to publish a message in case of detection (or not) of the ball
+        self.pub_play = rospy.Publisher('object', String, queue_size=10) 
         
     def callback(self, ros_data):
         
         detected_object = 0
-        pub_play = rospy.Publisher('/robot/object', String, queue_size=10)
-        pub_stop = rospy.Publisher('play_stop', String, queue_size=10) 
+        
         if VERBOSE:
                 print ('received image of type: "%s"' % ros_data.format)
             
             
             #### direct conversion to CV2 ####
         np_arr = np.fromstring(ros_data.data, np.uint8)
-        image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)  # OpenCV >= 3.0:
+        image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)  
 
-        greenLower = (50, 50, 20) #used to define the color we want to find
+        ## used to define the green color of the ball
+        greenLower = (50, 50, 20) 
         greenUpper = (70, 255, 255)
 
         blurred = cv2.GaussianBlur(image_np, (11, 11), 0)
@@ -117,22 +108,19 @@ class image_feature:
         mask = cv2.inRange(hsv, greenLower,greenUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
-            #cv2.imshow('mask', mask)
+            
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
                                     cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
         center = None
-            # only proceed if at least one contour was found
+            
         
 
         if len(cnts) > 0:
-                
+                # if the object is detected the pub:play publishes a message equal to 1
                 msg = "1"
-                pub_play.publish(msg)
-                
-                # find the largest contour in the mask, then use
-                # it to compute the minimum enclosing circle and
-                # centroid
+                self.pub_play.publish(msg)
+               
                 c = max(cnts, key=cv2.contourArea)
                 ((x, y), radius) = cv2.minEnclosingCircle(c)
                 M = cv2.moments(c)
@@ -149,9 +137,9 @@ class image_feature:
                     cv2.circle(image_np, center, 5, (0, 0, 255), -1)
                     vel = Twist()
                     
-                    vel.angular.z = -0.002*(center[0]-400) #inversely prop to the distance from the center of the actual image and the center of the detected image
-                    vel.linear.x = -0.01*(radius-100) #inv prop to the difference btw the radious of the detected object and a fixed radious set to 100
-                    # if radious become smaller, also the detected obj is smaller -> far from the desired position -> linear velocity will become positive
+                    vel.angular.z = -0.002*(center[0]-400) 
+                    vel.linear.x = -0.01*(radius-100) 
+                    
                     self.vel_pub.publish(vel)
                     
 
@@ -160,18 +148,13 @@ class image_feature:
                     
                     vel.linear.x = 0.5
                     self.vel_pub.publish(vel)
-                if abs(vel.linear.x) < 0.01 :
-                    stop_msg = "1"
-                    pub_stop.publish(stop_msg)
-                    vel.angular.z = 0
-                    vel.linear.x = 0
-                    self.vel_pub.publish(vel)
-
+                
         else: # if I'm not detecting obj, I rotate in order to find it
+                #if isn't detected any topic pub_play publishes a message equal to 0
                 msg = "0"
-                pub_play.publish(msg)
+                self.pub_play.publish(msg)
+
                 vel = Twist()
-                #rate = rospy.Rate(20)
                 vel.angular.z = 0.5
                 self.vel_pub.publish(vel)
                 
@@ -179,39 +162,17 @@ class image_feature:
             
         cv2.waitKey(2)
         
-            
        
-        
-####################################### state machine functions ##########################
+# FMS functions
+#def user_action():
 
-def callback_play(data):
-   	 	
-		global flag_play
-		global message
-		message = data.data
-		#checking that there's actually a message from the publisher
-		if message == "start play" :
-			flag_play = 1
-		else :
-			flag_play = 0
-		
-
-def user_action():
-			
-    global flag_play 
-    global message
-
-    rospy.Subscriber("/ball/chatter", String, callback_play)
-    #print(flag_play)
-    if flag_play == 1 :
-        #flag_play = 0
-        return('play')
-    else : 
-        return random.choice(['normal','sleep'])
-				
+    #global detected_object
+    #global message
+    #return ('play')
 
 # define state RandomlyGoing
 class RandomlyGoing(smach.State):
+    """! Define the RandomlyGoing state (normal) """
     def __init__(self):
 	
 	
@@ -222,35 +183,38 @@ class RandomlyGoing(smach.State):
         
     def execute(self, userdata):
     
+        """! Normal state execution 
+        @section Description
+        In this state is generated every time a new Point desired_position_normal_ in a radom way
+        This goal position is sent trough an action client to the server that makes the robot move toward the goal position
+        @return the sleep state
+        """
         
-        rospy.Subscriber("/ball/chatter", String, callback_play)
-
-        if flag_play != 1 :
-                
-                #print('flag = ' ,flag_play)
-                #cv2.destroyAllWindows()  
-                 #where the robot fix its position in order to reach the target
-                client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
-
-    
-                client.wait_for_server()
-
-                
-                goal = exp_assignment2.msg.PlanningGoal()
-                goal.target_pose.pose.position.x = -5
-                goal.target_pose.pose.position.y = 5
-            
-                client.send_goal(goal)
-
-                
-                client.wait_for_result()
-
-                #return client.get_result()  # A FibonacciResult
-                return user_action()
-                
-        return ('play')
+        global pub, active_,detected_object,desired_position_normal_
+# in the main you have a kind of finite state machine
         
+        desired_position_normal_.x = random.randint(-6,7)
+        desired_position_normal_.y = random.randint(-8,8)
+        desired_position_normal_.z = 0
 
+        print('I am moving to: ', desired_position_normal_)
+
+        ## definition of the action client
+        client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
+        client.wait_for_server()
+
+        # assigning to the goal position the desired_position_normal coordinates      
+        goal = exp_assignment2.msg.PlanningGoal()
+        goal.target_pose.pose.position.x = desired_position_normal_.x
+        goal.target_pose.pose.position.y = desired_position_normal_.y
+        #sending the goal to the server
+        client.send_goal(goal)
+       
+        client.wait_for_result()
+                
+        print('reached position')
+        time.sleep(5)
+        return ('sleep')
         rospy.loginfo('Executing state RANDOMLYGOING (users = %f)'%userdata.randomlygoing_counter_in)
         userdata.randomlygoing_counter_out = userdata.randomlygoing_counter_in + 1
 	
@@ -260,53 +224,57 @@ class RandomlyGoing(smach.State):
 # define state Sleeping
 class Sleeping(smach.State):
     def __init__(self):
-	
+	"""! Define the Sleeping state  """
 
         smach.State.__init__(self, 
-			     outcomes=['play','normal','sleep'],
+			     outcomes=['play'],
                              input_keys=['sleeping_counter_in'],
                              output_keys=['sleeping_counter_out'])
         
     def execute(self, userdata):
-
-        rospy.Subscriber("/ball/chatter", String, callback_play)
-        if flag_play != 1 :
-            
-            
-            client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
-
+        
+        """! Sleeping state execution 
+        @section Description
+        In this state the home position is sent trough an action client to the server that makes the robot move toward the goal position
+        @return the play state
+        """
     
-            client.wait_for_server()
+        global pub, active_,detected_object,desired_position_sleep_ 
+        
+        print('I am moving to home : ', desired_position_sleep_)
+        ## defintion of the action client
+        client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
+
+        client.wait_for_server()
+
+        # assigning to the goal position the desired_position_sleep coordinates       
+        goal = exp_assignment2.msg.PlanningGoal()
+        goal.target_pose.pose.position.x = desired_position_sleep_.x
+        goal.target_pose.pose.position.y = desired_position_sleep_.y
+
+        # sending the goal to the server 
+        client.send_goal(goal)
 
                 
-            goal = exp_assignment2.msg.PlanningGoal()
-            goal.target_pose.pose.position.x = -6
-            goal.target_pose.pose.position.y = 8
-            
-            client.send_goal(goal)
+        client.wait_for_result()
+        print('reached position')
 
-                
-            client.wait_for_result()
-            time.sleep(10)
-            #return client.get_result()  # A FibonacciResult
-            return user_action()
-                
+        time.sleep(10)
+        
         return ('play')
    	
-	#remains in the sleeping state for a certain amount of time
-        
-        #cv2.destroyAllWindows()
+	
         rospy.loginfo('Executing state SLEEPING (users = %f)'%userdata.sleeping_counter_in)
         userdata.sleeping_counter_out = userdata.sleeping_counter_in + 1
 	
-        #after being in the sleeping state it comes back to normal
+        
         
 
 # define state Playing
 class Playing(smach.State):
     def __init__(self):
+	"""! Define the Playing state  """
 	
-	global message,detected_object
     
         smach.State.__init__(self, 
                              outcomes=['normal'],
@@ -315,44 +283,50 @@ class Playing(smach.State):
        
 
     def execute(self, userdata):
-        global detected_object,stop
-        #cv2.destroyAllWindows() 
+        """! Playing state execution 
+        @section Description
+        In this state is called the class image_feature in order to make the robot tracking the robot
+        @return the normal state in case of absence of obstacle
+        """
+        global detected_object
+        
+        ## position messages for the rotation of the head of the robot
         msg_right = 0.7
         msg_left = -0.7
         msg_center = 0.0
-        print(detected_object)
-        rate = rospy.Rate(20)
-        #while not rospy.is_shutdown():
+       
+        
         im = image_feature()
-        print('inizio tempo')
-        t_end = time.time() + 10 # 60
+
+        print('start timer')
+        ## variable used to define a timer to stop the execution of image_feature
+        t_end = time.time() + 60 
+
         while time.time() < t_end :
 
-                        #im = image_feature()
+                        ## subscriber to the topic object used to detect wheter there's an object or not
                         rospy.Subscriber('object', String, call_play)
+                        ## publisher that publishes the messages position to rotate the head
                         pub_head_rot = rospy.Publisher("robot/joint1_position_controller/command", Float64, queue_size=1)
                         
-                            
+                        #if the object is detected the robot keeps moving the head and initializes the timer
                         if detected_object == 1 :
-                                
-                                print('inizio tempo')
-                                t_end = time.time() +10 # 60
+                                pub_head_rot.publish(msg_right)
+                                time.sleep(2)
+                                pub_head_rot.publish(msg_left)
+                                time.sleep(2)
+                                pub_head_rot.publish(msg_center)
+                                time.sleep(2)
+                                print('start timer')
+                                t_end = time.time() +60 
                                 rospy.Subscriber('object', String, call_play)
-                                rospy.Subscriber('play_stop', String, call_stop)
-                                if stop == 1 :
-                                        pub_head_rot.publish(msg_right)
-                                        time.sleep(5)
-                                        pub_head_rot.publish(msg_left)
-                                        time.sleep(5)
-                                        pub_head_rot.publish(msg_center)
-                                        #time.sleep(5)
-                        
-                        #rate.sleep() 
+                            
+                         
                            
         cv2.destroyAllWindows()               
         print('no object found')
-        return ('normal')
-        #im = image_feature()     
+        time.sleep(2)
+        return ('normal')    
 
         
         rospy.loginfo('Executing state PLAYING (users = %f)'%userdata.playing_counter_in)
@@ -373,16 +347,12 @@ def main():
     # Open the container
     with sm:
         # Add states to the container
-       
-        
-
         smach.StateMachine.add('RANDOMLYGOING', RandomlyGoing(), 
                                transitions={'normal':'RANDOMLYGOING', 
                                             'sleep':'SLEEPING',
 					    'play':'PLAYING'},
                                remapping={'randomlygoing_counter_in':'sm_counter', 
                                           'randomlygoing_counter_out':'sm_counter'})
-        
 
         smach.StateMachine.add('PLAYING', Playing(), 
                                transitions={'normal':'RANDOMLYGOING'
@@ -391,11 +361,12 @@ def main():
 							
                                remapping={'playing_counter_in':'sm_counter',
                                           'plying_counter_out':'sm_counter'})
+
+        
        
         smach.StateMachine.add('SLEEPING', Sleeping(), 
-                               transitions={'normal':'RANDOMLYGOING', 
-                                            'sleep':'SLEEPING',
-					    'play':'PLAYING'},
+                               transitions={'play':'PLAYING'
+					    },
                                remapping={'sleeping_counter_in':'sm_counter',
                                           'sleeping_counter_out':'sm_counter'})
 

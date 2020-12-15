@@ -1,4 +1,8 @@
 #! /usr/bin/env python
+"""!
+@section Description
+This scripts is a ROS action server that makes the robot moving given the position and the orientation of the goal
+"""
 # import ros stuff
 import rospy
 from sensor_msgs.msg import LaserScan
@@ -125,13 +129,13 @@ def done():
     twist_msg.linear.x = 0
     twist_msg.angular.z = 0
     pub.publish(twist_msg)
+    
 
 # Function that will be invoked when a new goal is recived 
 def planning(goal):
 
     global state_, desired_position_
     global act_s
-
     desired_position_.x = goal.target_pose.pose.position.x
     desired_position_.y = goal.target_pose.pose.position.y
 
@@ -178,7 +182,7 @@ def planning(goal):
 
 def main():
     global pub, active_, act_s
-    # Inizializzare il nodo poi creare SimpleActionServer
+    
     rospy.init_node('go_to_point')
     pub = rospy.Publisher('/robot/cmd_vel', Twist, queue_size=1)
     sub_odom = rospy.Subscriber('/robot/odom', Odometry, clbk_odom)

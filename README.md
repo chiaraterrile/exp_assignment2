@@ -15,7 +15,7 @@ In the folder `exp_assignment2/scripts` there are the following files :
 
 In the folder `exp_assignment2/urdf` there are all the files describing the structure of the robot, of the ball and of the human present in the scene. ( robot.xacro, robot.gazebo, human.urdf, ball.xacro, ball.gazebo)
 
-In the folder `exp_assignment2/launch` there the launch file **gazebo_world.launch** that launches the simulation in Gazebo.
+In the folder `exp_assignment2/launch` there's the launch file **gazebo_world.launch** that launches the simulation in Gazebo.
 
 In the folder `exp_assignment2/action` there's the file Planning.action which is the file containing the message for the two action servers.
 

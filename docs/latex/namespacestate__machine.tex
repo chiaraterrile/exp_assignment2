@@ -1,0 +1,149 @@
+\hypertarget{namespacestate__machine}{}\doxysection{state\+\_\+machine Namespace Reference}
+\label{namespacestate__machine}\index{state\_machine@{state\_machine}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classstate__machine_1_1image__feature}{image\+\_\+feature}}
+\begin{DoxyCompactList}\small\item\em define the class for tracking the ball \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}}
+\item 
+class \mbox{\hyperlink{classstate__machine_1_1_randomly_going}{Randomly\+Going}}
+\begin{DoxyCompactList}\small\item\em Define the \mbox{\hyperlink{classstate__machine_1_1_randomly_going}{Randomly\+Going}} state (normal) \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classstate__machine_1_1_sleeping}{Sleeping}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{namespacestate__machine_a2066302cacce0850157930a0a35b7793}{call\+\_\+play}} (data)
+\begin{DoxyCompactList}\small\item\em This function is a callback that if receives \textquotesingle{}1\textquotesingle{} as message puts the flag detected\+\_\+object equal to 1. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}{main}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacestate__machine_ab22020f080fac8ffaee0564fbc76e11a}{desired\+\_\+position\+\_\+sleep\+\_\+}} = Point()
+\begin{DoxyCompactList}\small\item\em Coordinates of the home position in the sleep state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacestate__machine_a81ffbe3d9e69ff56cc9d640c6de7b832}{x}}
+\item 
+\mbox{\hyperlink{namespacestate__machine_aec5c2b3d31a0cff21276a25d744d29c6}{y}}
+\item 
+\mbox{\hyperlink{namespacestate__machine_a20f75f04a841ea5ea12f626ae9e1bfa6}{z}}
+\item 
+\mbox{\hyperlink{namespacestate__machine_af8d77d5308f98f125434b722ae4276e6}{desired\+\_\+position\+\_\+normal\+\_\+}} = Point()
+\begin{DoxyCompactList}\small\item\em Coordinates of the position in the normal state. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{namespacestate__machine_abbdff28ed86bf32ab03873bf84f18f0e}{detected\+\_\+object}} = 0
+\begin{DoxyCompactList}\small\item\em flag that indicates wheter there\textquotesingle{}s an object or not \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacestate__machine_a8b1913f94c64745cffa6fd2062e38f74}{V\+E\+R\+B\+O\+SE}} = False
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacestate__machine_a2066302cacce0850157930a0a35b7793}\label{namespacestate__machine_a2066302cacce0850157930a0a35b7793}} 
+\index{state\_machine@{state\_machine}!call\_play@{call\_play}}
+\index{call\_play@{call\_play}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{call\_play()}{call\_play()}}
+{\footnotesize\ttfamily def state\+\_\+machine.\+call\+\_\+play (\begin{DoxyParamCaption}\item[{}]{data }\end{DoxyParamCaption})}
+
+
+
+This function is a callback that if receives \textquotesingle{}1\textquotesingle{} as message puts the flag detected\+\_\+object equal to 1. 
+
+
+
+Definition at line 59 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}\label{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}} 
+\index{state\_machine@{state\_machine}!main@{main}}
+\index{main@{main}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def state\+\_\+machine.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 339 of file state\+\_\+machine.\+py.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacestate__machine_af8d77d5308f98f125434b722ae4276e6}\label{namespacestate__machine_af8d77d5308f98f125434b722ae4276e6}} 
+\index{state\_machine@{state\_machine}!desired\_position\_normal\_@{desired\_position\_normal\_}}
+\index{desired\_position\_normal\_@{desired\_position\_normal\_}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{desired\_position\_normal\_}{desired\_position\_normal\_}}
+{\footnotesize\ttfamily state\+\_\+machine.\+desired\+\_\+position\+\_\+normal\+\_\+ = Point()}
+
+
+
+Coordinates of the position in the normal state. 
+
+
+
+Definition at line 49 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_ab22020f080fac8ffaee0564fbc76e11a}\label{namespacestate__machine_ab22020f080fac8ffaee0564fbc76e11a}} 
+\index{state\_machine@{state\_machine}!desired\_position\_sleep\_@{desired\_position\_sleep\_}}
+\index{desired\_position\_sleep\_@{desired\_position\_sleep\_}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{desired\_position\_sleep\_}{desired\_position\_sleep\_}}
+{\footnotesize\ttfamily state\+\_\+machine.\+desired\+\_\+position\+\_\+sleep\+\_\+ = Point()}
+
+
+
+Coordinates of the home position in the sleep state. 
+
+
+
+Definition at line 43 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_abbdff28ed86bf32ab03873bf84f18f0e}\label{namespacestate__machine_abbdff28ed86bf32ab03873bf84f18f0e}} 
+\index{state\_machine@{state\_machine}!detected\_object@{detected\_object}}
+\index{detected\_object@{detected\_object}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{detected\_object}{detected\_object}}
+{\footnotesize\ttfamily int state\+\_\+machine.\+detected\+\_\+object = 0}
+
+
+
+flag that indicates wheter there\textquotesingle{}s an object or not 
+
+
+
+Definition at line 52 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_a8b1913f94c64745cffa6fd2062e38f74}\label{namespacestate__machine_a8b1913f94c64745cffa6fd2062e38f74}} 
+\index{state\_machine@{state\_machine}!VERBOSE@{VERBOSE}}
+\index{VERBOSE@{VERBOSE}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{VERBOSE}{VERBOSE}}
+{\footnotesize\ttfamily bool state\+\_\+machine.\+V\+E\+R\+B\+O\+SE = False}
+
+
+
+Definition at line 56 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_a81ffbe3d9e69ff56cc9d640c6de7b832}\label{namespacestate__machine_a81ffbe3d9e69ff56cc9d640c6de7b832}} 
+\index{state\_machine@{state\_machine}!x@{x}}
+\index{x@{x}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{x}{x}}
+{\footnotesize\ttfamily state\+\_\+machine.\+x}
+
+
+
+Definition at line 44 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_aec5c2b3d31a0cff21276a25d744d29c6}\label{namespacestate__machine_aec5c2b3d31a0cff21276a25d744d29c6}} 
+\index{state\_machine@{state\_machine}!y@{y}}
+\index{y@{y}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{y}{y}}
+{\footnotesize\ttfamily state\+\_\+machine.\+y}
+
+
+
+Definition at line 45 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_a20f75f04a841ea5ea12f626ae9e1bfa6}\label{namespacestate__machine_a20f75f04a841ea5ea12f626ae9e1bfa6}} 
+\index{state\_machine@{state\_machine}!z@{z}}
+\index{z@{z}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{z}{z}}
+{\footnotesize\ttfamily state\+\_\+machine.\+z}
+
+
+
+Definition at line 46 of file state\+\_\+machine.\+py.
+

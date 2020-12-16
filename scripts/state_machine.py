@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-
 """!
-@author Terrile Chiara
-@mainpage Assignment 2 ExpRob
-@package exp_assignment2
 @section Description
 This scripts is a ROS node that implements a FSM that according to what detects the camera switch to one state or another
+
 """
+
+
+
 
 # Imports
 import roslib

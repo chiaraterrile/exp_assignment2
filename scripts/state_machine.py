@@ -84,7 +84,7 @@ class image_feature:
         self.subscriber = rospy.Subscriber("robot/camera1/image_raw/compressed",
                                            CompressedImage, self.callback,  queue_size=1)
         
-        ##topic to publish a message in case of detection (or not) of the ball
+        ##publisher to publish a message in case of detection (or not) of the ball
         self.pub_play = rospy.Publisher('object', String, queue_size=10) 
         
     def callback(self, ros_data):
@@ -164,11 +164,7 @@ class image_feature:
         
        
 # FMS functions
-#def user_action():
 
-    #global detected_object
-    #global message
-    #return ('play')
 
 # define state RandomlyGoing
 class RandomlyGoing(smach.State):

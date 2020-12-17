@@ -187,8 +187,9 @@ class RandomlyGoing(smach.State):
         """
         
         global pub, active_,detected_object,desired_position_normal_
-# in the main you have a kind of finite state machine
-        
+
+        # random values for the coordinate of normal 
+        # the limits have been choosen in order to avoid the obstacles present in the arena
         desired_position_normal_.x = random.randint(-6,7)
         desired_position_normal_.y = random.randint(-8,8)
         desired_position_normal_.z = 0

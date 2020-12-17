@@ -1,5 +1,11 @@
 \hypertarget{classstate__machine_1_1_playing}{}\doxysection{state\+\_\+machine.\+Playing Class Reference}
 \label{classstate__machine_1_1_playing}\index{state\_machine.Playing@{state\_machine.Playing}}
+
+
+Define the \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state ~\newline
+  
+
+
 Inheritance diagram for state\+\_\+machine.\+Playing\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -11,24 +17,30 @@ Inheritance diagram for state\+\_\+machine.\+Playing\+:\begin{figure}[H]
 \item 
 def \mbox{\hyperlink{classstate__machine_1_1_playing_a0274e6dde7ceb62558bd2f08d6215eae}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self)
 \item 
+def \mbox{\hyperlink{classstate__machine_1_1_playing_a68f46d4118781d7e4a5b77535f4fe0f6}{callback}} (self, ros\+\_\+data)
+\begin{DoxyCompactList}\small\item\em This function is a callback that performs the tracking of the ball using the camera. \end{DoxyCompactList}\item 
 def \mbox{\hyperlink{classstate__machine_1_1_playing_aeebcb7679fa0f7380e52b7b63bb9e8cf}{execute}} (self, userdata)
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state execution. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsection*{Static Public Attributes}
+\doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classstate__machine_1_1_playing_af32806e3afb76f1ae8895ae98979cc66}{outcomes}}
-\begin{DoxyCompactList}\small\item\em Define the \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state ~\newline
- \end{DoxyCompactList}\item 
-\mbox{\hyperlink{classstate__machine_1_1_playing_a50c4a0dd7e87a37f1856b39b9ab53c7d}{input\+\_\+keys}}
-\item 
-\mbox{\hyperlink{classstate__machine_1_1_playing_a0678646fa0ec4538d8e4488da83fa357}{output\+\_\+keys}}
-\end{DoxyCompactItemize}
+\mbox{\hyperlink{classstate__machine_1_1_playing_a87234a3d8badfe6522b6369e955d928b}{image\+\_\+pub}}
+\begin{DoxyCompactList}\small\item\em publisher to the topic of the camera \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classstate__machine_1_1_playing_a4634a56a4fa919bbb98545537789c93c}{vel\+\_\+pub}}
+\begin{DoxyCompactList}\small\item\em publisher that gives velocity and position command to the robot \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classstate__machine_1_1_playing_a2eb1881eaf490eb47856c9c3a98c762d}{pub\+\_\+play}}
+\begin{DoxyCompactList}\small\item\em publisher to publish a message in case of detection (or not) of the ball \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classstate__machine_1_1_playing_a79b7fea6a91668aa908b054368caa627}{subscriber}}
+\begin{DoxyCompactList}\small\item\em subscriber to the topic of the camera \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classstate__machine_1_1_playing_af3ad7139391d29318cc4df3aea263ba7}{pub\+\_\+stop}}
+\begin{DoxyCompactList}\small\item\em publisher to publish a message when the robot reaches the ball and stops in front of it \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
+Define the \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state ~\newline
+ 
 
-
-Definition at line 270 of file state\+\_\+machine.\+py.
+Definition at line 223 of file state\+\_\+machine.\+py.
 
 
 
@@ -41,11 +53,25 @@ Definition at line 270 of file state\+\_\+machine.\+py.
 
 
 
-Definition at line 271 of file state\+\_\+machine.\+py.
+Definition at line 225 of file state\+\_\+machine.\+py.
 
 
 
 \doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classstate__machine_1_1_playing_a68f46d4118781d7e4a5b77535f4fe0f6}\label{classstate__machine_1_1_playing_a68f46d4118781d7e4a5b77535f4fe0f6}} 
+\index{state\_machine.Playing@{state\_machine.Playing}!callback@{callback}}
+\index{callback@{callback}!state\_machine.Playing@{state\_machine.Playing}}
+\doxysubsubsection{\texorpdfstring{callback()}{callback()}}
+{\footnotesize\ttfamily def state\+\_\+machine.\+Playing.\+callback (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ros\+\_\+data }\end{DoxyParamCaption})}
+
+
+
+This function is a callback that performs the tracking of the ball using the camera. 
+
+
+
+Definition at line 245 of file state\+\_\+machine.\+py.
+
 \mbox{\Hypertarget{classstate__machine_1_1_playing_aeebcb7679fa0f7380e52b7b63bb9e8cf}\label{classstate__machine_1_1_playing_aeebcb7679fa0f7380e52b7b63bb9e8cf}} 
 \index{state\_machine.Playing@{state\_machine.Playing}!execute@{execute}}
 \index{execute@{execute}!state\_machine.Playing@{state\_machine.Playing}}
@@ -57,50 +83,85 @@ Definition at line 271 of file state\+\_\+machine.\+py.
 \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state execution. 
 
 \hypertarget{index_Description}{}\doxysubsection{Description}\label{index_Description}
-In this state is called the class \mbox{\hyperlink{classstate__machine_1_1image__feature}{image\+\_\+feature}} in order to make the robot tracking the robot \begin{DoxyReturn}{Returns}
-the normal state in case of absence of obstacle 
+In this state the robot tracks the ball until it is present, when it cannot detect the ball it returns to the normal state \begin{DoxyReturn}{Returns}
+the normal state in case of absence of the ball 
 \end{DoxyReturn}
 
 
-Definition at line 281 of file state\+\_\+machine.\+py.
+Definition at line 326 of file state\+\_\+machine.\+py.
 
 
 
 \doxysubsection{Member Data Documentation}
-\mbox{\Hypertarget{classstate__machine_1_1_playing_a50c4a0dd7e87a37f1856b39b9ab53c7d}\label{classstate__machine_1_1_playing_a50c4a0dd7e87a37f1856b39b9ab53c7d}} 
-\index{state\_machine.Playing@{state\_machine.Playing}!input\_keys@{input\_keys}}
-\index{input\_keys@{input\_keys}!state\_machine.Playing@{state\_machine.Playing}}
-\doxysubsubsection{\texorpdfstring{input\_keys}{input\_keys}}
-{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+input\+\_\+keys\hspace{0.3cm}{\ttfamily [static]}}
+\mbox{\Hypertarget{classstate__machine_1_1_playing_a87234a3d8badfe6522b6369e955d928b}\label{classstate__machine_1_1_playing_a87234a3d8badfe6522b6369e955d928b}} 
+\index{state\_machine.Playing@{state\_machine.Playing}!image\_pub@{image\_pub}}
+\index{image\_pub@{image\_pub}!state\_machine.Playing@{state\_machine.Playing}}
+\doxysubsubsection{\texorpdfstring{image\_pub}{image\_pub}}
+{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+image\+\_\+pub}
 
 
 
-Definition at line 277 of file state\+\_\+machine.\+py.
-
-\mbox{\Hypertarget{classstate__machine_1_1_playing_af32806e3afb76f1ae8895ae98979cc66}\label{classstate__machine_1_1_playing_af32806e3afb76f1ae8895ae98979cc66}} 
-\index{state\_machine.Playing@{state\_machine.Playing}!outcomes@{outcomes}}
-\index{outcomes@{outcomes}!state\_machine.Playing@{state\_machine.Playing}}
-\doxysubsubsection{\texorpdfstring{outcomes}{outcomes}}
-{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+outcomes\hspace{0.3cm}{\ttfamily [static]}}
+publisher to the topic of the camera 
 
 
 
-Define the \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state ~\newline
- 
+Definition at line 227 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{classstate__machine_1_1_playing_a2eb1881eaf490eb47856c9c3a98c762d}\label{classstate__machine_1_1_playing_a2eb1881eaf490eb47856c9c3a98c762d}} 
+\index{state\_machine.Playing@{state\_machine.Playing}!pub\_play@{pub\_play}}
+\index{pub\_play@{pub\_play}!state\_machine.Playing@{state\_machine.Playing}}
+\doxysubsubsection{\texorpdfstring{pub\_play}{pub\_play}}
+{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+pub\+\_\+play}
 
 
 
-Definition at line 276 of file state\+\_\+machine.\+py.
-
-\mbox{\Hypertarget{classstate__machine_1_1_playing_a0678646fa0ec4538d8e4488da83fa357}\label{classstate__machine_1_1_playing_a0678646fa0ec4538d8e4488da83fa357}} 
-\index{state\_machine.Playing@{state\_machine.Playing}!output\_keys@{output\_keys}}
-\index{output\_keys@{output\_keys}!state\_machine.Playing@{state\_machine.Playing}}
-\doxysubsubsection{\texorpdfstring{output\_keys}{output\_keys}}
-{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+output\+\_\+keys\hspace{0.3cm}{\ttfamily [static]}}
+publisher to publish a message in case of detection (or not) of the ball 
 
 
 
-Definition at line 278 of file state\+\_\+machine.\+py.
+Definition at line 233 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{classstate__machine_1_1_playing_af3ad7139391d29318cc4df3aea263ba7}\label{classstate__machine_1_1_playing_af3ad7139391d29318cc4df3aea263ba7}} 
+\index{state\_machine.Playing@{state\_machine.Playing}!pub\_stop@{pub\_stop}}
+\index{pub\_stop@{pub\_stop}!state\_machine.Playing@{state\_machine.Playing}}
+\doxysubsubsection{\texorpdfstring{pub\_stop}{pub\_stop}}
+{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+pub\+\_\+stop}
+
+
+
+publisher to publish a message when the robot reaches the ball and stops in front of it 
+
+
+
+Definition at line 238 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{classstate__machine_1_1_playing_a79b7fea6a91668aa908b054368caa627}\label{classstate__machine_1_1_playing_a79b7fea6a91668aa908b054368caa627}} 
+\index{state\_machine.Playing@{state\_machine.Playing}!subscriber@{subscriber}}
+\index{subscriber@{subscriber}!state\_machine.Playing@{state\_machine.Playing}}
+\doxysubsubsection{\texorpdfstring{subscriber}{subscriber}}
+{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+subscriber}
+
+
+
+subscriber to the topic of the camera 
+
+
+
+Definition at line 235 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{classstate__machine_1_1_playing_a4634a56a4fa919bbb98545537789c93c}\label{classstate__machine_1_1_playing_a4634a56a4fa919bbb98545537789c93c}} 
+\index{state\_machine.Playing@{state\_machine.Playing}!vel\_pub@{vel\_pub}}
+\index{vel\_pub@{vel\_pub}!state\_machine.Playing@{state\_machine.Playing}}
+\doxysubsubsection{\texorpdfstring{vel\_pub}{vel\_pub}}
+{\footnotesize\ttfamily state\+\_\+machine.\+Playing.\+vel\+\_\+pub}
+
+
+
+publisher that gives velocity and position command to the robot 
+
+
+
+Definition at line 229 of file state\+\_\+machine.\+py.
 
 
 

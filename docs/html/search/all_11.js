@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['vel_5fpub_47',['vel_pub',['../classstate__machine_1_1image__feature.html#a62bc4749ef4e529d537db05de41bc246',1,'state_machine::image_feature']]],
-  ['verbose_48',['VERBOSE',['../namespacestate__machine.html#a8b1913f94c64745cffa6fd2062e38f74',1,'state_machine']]]
+  ['x_54',['x',['../namespacestate__machine.html#a81ffbe3d9e69ff56cc9d640c6de7b832',1,'state_machine']]]
 ];

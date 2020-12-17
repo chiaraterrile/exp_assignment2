@@ -72,15 +72,16 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstate__machine_1_1image__feature.html">image_feature</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">define the class for tracking the ball  <a href="classstate__machine_1_1image__feature.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstate__machine_1_1_playing.html">Playing</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the <a class="el" href="classstate__machine_1_1_playing.html" title="Define the Playing state">Playing</a> state <br  />
+  <a href="classstate__machine_1_1_playing.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstate__machine_1_1_randomly_going.html">RandomlyGoing</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the <a class="el" href="classstate__machine_1_1_randomly_going.html" title="Define the RandomlyGoing state (normal)">RandomlyGoing</a> state (normal)  <a href="classstate__machine_1_1_randomly_going.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstate__machine_1_1_sleeping.html">Sleeping</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the <a class="el" href="classstate__machine_1_1_sleeping.html" title="Define the Sleeping state">Sleeping</a> state <br  />
+  <a href="classstate__machine_1_1_sleeping.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -88,6 +89,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a2066302cacce0850157930a0a35b7793"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#a2066302cacce0850157930a0a35b7793">call_play</a> (data)</td></tr>
 <tr class="memdesc:a2066302cacce0850157930a0a35b7793"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is a callback that if receives '1' as message puts the flag detected_object equal to 1.  <a href="namespacestate__machine.html#a2066302cacce0850157930a0a35b7793">More...</a><br /></td></tr>
 <tr class="separator:a2066302cacce0850157930a0a35b7793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1dbbde0272a17070f0af570b7eed0934"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#a1dbbde0272a17070f0af570b7eed0934">call_stop</a> (data)</td></tr>
+<tr class="memdesc:a1dbbde0272a17070f0af570b7eed0934"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is a callback that when the robot stops in front of the ball puts the flag stop = 1.  <a href="namespacestate__machine.html#a1dbbde0272a17070f0af570b7eed0934">More...</a><br /></td></tr>
+<tr class="separator:a1dbbde0272a17070f0af570b7eed0934"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6762bcb29e6196ec2f4c3a31159b3699"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#a6762bcb29e6196ec2f4c3a31159b3699">callback_start_play</a> (data)</td></tr>
+<tr class="memdesc:a6762bcb29e6196ec2f4c3a31159b3699"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is a callback that when the ball is in the arena puts the flag flag_play equal to 1.  <a href="namespacestate__machine.html#a6762bcb29e6196ec2f4c3a31159b3699">More...</a><br /></td></tr>
+<tr class="separator:a6762bcb29e6196ec2f4c3a31159b3699"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afaa99f0eebff6571a958fcc827c6a367"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#afaa99f0eebff6571a958fcc827c6a367">user_action</a> ()</td></tr>
+<tr class="memdesc:afaa99f0eebff6571a958fcc827c6a367"><td class="mdescLeft">&#160;</td><td class="mdescRight">this function controls the next state of the FSM according to what it receives in the flag_play, if the ball is in the arena the robot passes to the pay state, if not, it passes the sleep state or normal in a randomic way.  <a href="namespacestate__machine.html#afaa99f0eebff6571a958fcc827c6a367">More...</a><br /></td></tr>
+<tr class="separator:afaa99f0eebff6571a958fcc827c6a367"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c680ce705e6052fa07c6cece21743d0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#a5c680ce705e6052fa07c6cece21743d0">main</a> ()</td></tr>
 <tr class="separator:a5c680ce705e6052fa07c6cece21743d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -108,6 +118,12 @@ Variables</h2></td></tr>
 <tr class="memitem:abbdff28ed86bf32ab03873bf84f18f0e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#abbdff28ed86bf32ab03873bf84f18f0e">detected_object</a> = 0</td></tr>
 <tr class="memdesc:abbdff28ed86bf32ab03873bf84f18f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag that indicates wheter there's an object or not  <a href="namespacestate__machine.html#abbdff28ed86bf32ab03873bf84f18f0e">More...</a><br /></td></tr>
 <tr class="separator:abbdff28ed86bf32ab03873bf84f18f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa6471645aaa28dfd02de7b3ccb6cead"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#afa6471645aaa28dfd02de7b3ccb6cead">stop</a> = 0</td></tr>
+<tr class="memdesc:afa6471645aaa28dfd02de7b3ccb6cead"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag that indicates whether the robot has stopped or not in front of the ball  <a href="namespacestate__machine.html#afa6471645aaa28dfd02de7b3ccb6cead">More...</a><br /></td></tr>
+<tr class="separator:afa6471645aaa28dfd02de7b3ccb6cead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc1896c976e5e0c71607d0fc2e97d510"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#acc1896c976e5e0c71607d0fc2e97d510">flag_play</a> = 0</td></tr>
+<tr class="memdesc:acc1896c976e5e0c71607d0fc2e97d510"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag that indicates when the ball is in the arena and so the robot can pass in tha play state  <a href="namespacestate__machine.html#acc1896c976e5e0c71607d0fc2e97d510">More...</a><br /></td></tr>
+<tr class="separator:acc1896c976e5e0c71607d0fc2e97d510"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b1913f94c64745cffa6fd2062e38f74"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestate__machine.html#a8b1913f94c64745cffa6fd2062e38f74">VERBOSE</a> = False</td></tr>
 <tr class="separator:a8b1913f94c64745cffa6fd2062e38f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -134,7 +150,51 @@ Description</h1>
 
 <p>This function is a callback that if receives '1' as message puts the flag detected_object equal to 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00059">59</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00062">62</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+
+</div>
+</div>
+<a id="a1dbbde0272a17070f0af570b7eed0934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1dbbde0272a17070f0af570b7eed0934">&#9670;&nbsp;</a></span>call_stop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def state_machine.call_stop </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function is a callback that when the robot stops in front of the ball puts the flag stop = 1. </p>
+
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00074">74</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+
+</div>
+</div>
+<a id="a6762bcb29e6196ec2f4c3a31159b3699"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6762bcb29e6196ec2f4c3a31159b3699">&#9670;&nbsp;</a></span>callback_start_play()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def state_machine.callback_start_play </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function is a callback that when the ball is in the arena puts the flag flag_play equal to 1. </p>
+
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00089">89</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
 
 </div>
 </div>
@@ -153,7 +213,28 @@ Description</h1>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00335">335</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00382">382</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+
+</div>
+</div>
+<a id="afaa99f0eebff6571a958fcc827c6a367"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaa99f0eebff6571a958fcc827c6a367">&#9670;&nbsp;</a></span>user_action()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def state_machine.user_action </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>this function controls the next state of the FSM according to what it receives in the flag_play, if the ball is in the arena the robot passes to the pay state, if not, it passes the sleep state or normal in a randomic way. </p>
+
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00101">101</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
 
 </div>
 </div>
@@ -212,6 +293,42 @@ Description</h1>
 
 </div>
 </div>
+<a id="acc1896c976e5e0c71607d0fc2e97d510"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc1896c976e5e0c71607d0fc2e97d510">&#9670;&nbsp;</a></span>flag_play</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int state_machine.flag_play = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>flag that indicates when the ball is in the arena and so the robot can pass in tha play state </p>
+
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00056">56</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+
+</div>
+</div>
+<a id="afa6471645aaa28dfd02de7b3ccb6cead"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa6471645aaa28dfd02de7b3ccb6cead">&#9670;&nbsp;</a></span>stop</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int state_machine.stop = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>flag that indicates whether the robot has stopped or not in front of the ball </p>
+
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00054">54</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+
+</div>
+</div>
 <a id="a8b1913f94c64745cffa6fd2062e38f74"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8b1913f94c64745cffa6fd2062e38f74">&#9670;&nbsp;</a></span>VERBOSE</h2>
 
@@ -224,7 +341,7 @@ Description</h1>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00056">56</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="state__machine_8py_source.html#l00059">59</a> of file <a class="el" href="state__machine_8py_source.html">state_machine.py</a>.</p>
 
 </div>
 </div>

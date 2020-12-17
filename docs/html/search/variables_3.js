@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['kp_5fa_88',['kp_a',['../namespacego__to__point__action.html#a67a9de26fa4f88312f9cc4a8ecedb369',1,'go_to_point_action.kp_a()'],['../namespacego__to__point__ball.html#aac67ecb6c41141092b1ccaba4b537afc',1,'go_to_point_ball.kp_a()']]],
-  ['kp_5fd_89',['kp_d',['../namespacego__to__point__action.html#acd565e807f177f678d6a12d504d01e60',1,'go_to_point_action.kp_d()'],['../namespacego__to__point__ball.html#aeb49969b88b7ca77d9abdeae42cb1964',1,'go_to_point_ball.kp_d()']]]
+  ['image_5fpub_96',['image_pub',['../classstate__machine_1_1_playing.html#a87234a3d8badfe6522b6369e955d928b',1,'state_machine::Playing']]]
 ];

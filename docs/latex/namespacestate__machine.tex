@@ -3,19 +3,25 @@
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \mbox{\hyperlink{classstate__machine_1_1image__feature}{image\+\_\+feature}}
-\begin{DoxyCompactList}\small\item\em define the class for tracking the ball \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}}
-\item 
+\begin{DoxyCompactList}\small\item\em Define the \mbox{\hyperlink{classstate__machine_1_1_playing}{Playing}} state ~\newline
+ \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classstate__machine_1_1_randomly_going}{Randomly\+Going}}
 \begin{DoxyCompactList}\small\item\em Define the \mbox{\hyperlink{classstate__machine_1_1_randomly_going}{Randomly\+Going}} state (normal) \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classstate__machine_1_1_sleeping}{Sleeping}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Define the \mbox{\hyperlink{classstate__machine_1_1_sleeping}{Sleeping}} state ~\newline
+ \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 def \mbox{\hyperlink{namespacestate__machine_a2066302cacce0850157930a0a35b7793}{call\+\_\+play}} (data)
 \begin{DoxyCompactList}\small\item\em This function is a callback that if receives \textquotesingle{}1\textquotesingle{} as message puts the flag detected\+\_\+object equal to 1. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacestate__machine_a1dbbde0272a17070f0af570b7eed0934}{call\+\_\+stop}} (data)
+\begin{DoxyCompactList}\small\item\em This function is a callback that when the robot stops in front of the ball puts the flag stop = 1. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacestate__machine_a6762bcb29e6196ec2f4c3a31159b3699}{callback\+\_\+start\+\_\+play}} (data)
+\begin{DoxyCompactList}\small\item\em This function is a callback that when the ball is in the arena puts the flag flag\+\_\+play equal to 1. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{namespacestate__machine_afaa99f0eebff6571a958fcc827c6a367}{user\+\_\+action}} ()
+\begin{DoxyCompactList}\small\item\em this function controls the next state of the F\+SM according to what it receives in the flag\+\_\+play, if the ball is in the arena the robot passes to the pay state, if not, it passes the sleep state or normal in a randomic way. \end{DoxyCompactList}\item 
 def \mbox{\hyperlink{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}{main}} ()
 \end{DoxyCompactItemize}
 \doxysubsection*{Variables}
@@ -33,6 +39,10 @@ def \mbox{\hyperlink{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}{
 \begin{DoxyCompactList}\small\item\em Coordinates of the position in the normal state. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{namespacestate__machine_abbdff28ed86bf32ab03873bf84f18f0e}{detected\+\_\+object}} = 0
 \begin{DoxyCompactList}\small\item\em flag that indicates wheter there\textquotesingle{}s an object or not \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{namespacestate__machine_afa6471645aaa28dfd02de7b3ccb6cead}{stop}} = 0
+\begin{DoxyCompactList}\small\item\em flag that indicates whether the robot has stopped or not in front of the ball \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{namespacestate__machine_acc1896c976e5e0c71607d0fc2e97d510}{flag\+\_\+play}} = 0
+\begin{DoxyCompactList}\small\item\em flag that indicates when the ball is in the arena and so the robot can pass in tha play state \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{namespacestate__machine_a8b1913f94c64745cffa6fd2062e38f74}{V\+E\+R\+B\+O\+SE}} = False
 \end{DoxyCompactItemize}
 
@@ -54,7 +64,35 @@ This function is a callback that if receives \textquotesingle{}1\textquotesingle
 
 
 
-Definition at line 59 of file state\+\_\+machine.\+py.
+Definition at line 62 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_a1dbbde0272a17070f0af570b7eed0934}\label{namespacestate__machine_a1dbbde0272a17070f0af570b7eed0934}} 
+\index{state\_machine@{state\_machine}!call\_stop@{call\_stop}}
+\index{call\_stop@{call\_stop}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{call\_stop()}{call\_stop()}}
+{\footnotesize\ttfamily def state\+\_\+machine.\+call\+\_\+stop (\begin{DoxyParamCaption}\item[{}]{data }\end{DoxyParamCaption})}
+
+
+
+This function is a callback that when the robot stops in front of the ball puts the flag stop = 1. 
+
+
+
+Definition at line 74 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_a6762bcb29e6196ec2f4c3a31159b3699}\label{namespacestate__machine_a6762bcb29e6196ec2f4c3a31159b3699}} 
+\index{state\_machine@{state\_machine}!callback\_start\_play@{callback\_start\_play}}
+\index{callback\_start\_play@{callback\_start\_play}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{callback\_start\_play()}{callback\_start\_play()}}
+{\footnotesize\ttfamily def state\+\_\+machine.\+callback\+\_\+start\+\_\+play (\begin{DoxyParamCaption}\item[{}]{data }\end{DoxyParamCaption})}
+
+
+
+This function is a callback that when the ball is in the arena puts the flag flag\+\_\+play equal to 1. 
+
+
+
+Definition at line 89 of file state\+\_\+machine.\+py.
 
 \mbox{\Hypertarget{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}\label{namespacestate__machine_a5c680ce705e6052fa07c6cece21743d0}} 
 \index{state\_machine@{state\_machine}!main@{main}}
@@ -64,7 +102,21 @@ Definition at line 59 of file state\+\_\+machine.\+py.
 
 
 
-Definition at line 335 of file state\+\_\+machine.\+py.
+Definition at line 382 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_afaa99f0eebff6571a958fcc827c6a367}\label{namespacestate__machine_afaa99f0eebff6571a958fcc827c6a367}} 
+\index{state\_machine@{state\_machine}!user\_action@{user\_action}}
+\index{user\_action@{user\_action}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{user\_action()}{user\_action()}}
+{\footnotesize\ttfamily def state\+\_\+machine.\+user\+\_\+action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+this function controls the next state of the F\+SM according to what it receives in the flag\+\_\+play, if the ball is in the arena the robot passes to the pay state, if not, it passes the sleep state or normal in a randomic way. 
+
+
+
+Definition at line 101 of file state\+\_\+machine.\+py.
 
 
 
@@ -111,6 +163,34 @@ flag that indicates wheter there\textquotesingle{}s an object or not
 
 Definition at line 52 of file state\+\_\+machine.\+py.
 
+\mbox{\Hypertarget{namespacestate__machine_acc1896c976e5e0c71607d0fc2e97d510}\label{namespacestate__machine_acc1896c976e5e0c71607d0fc2e97d510}} 
+\index{state\_machine@{state\_machine}!flag\_play@{flag\_play}}
+\index{flag\_play@{flag\_play}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{flag\_play}{flag\_play}}
+{\footnotesize\ttfamily int state\+\_\+machine.\+flag\+\_\+play = 0}
+
+
+
+flag that indicates when the ball is in the arena and so the robot can pass in tha play state 
+
+
+
+Definition at line 56 of file state\+\_\+machine.\+py.
+
+\mbox{\Hypertarget{namespacestate__machine_afa6471645aaa28dfd02de7b3ccb6cead}\label{namespacestate__machine_afa6471645aaa28dfd02de7b3ccb6cead}} 
+\index{state\_machine@{state\_machine}!stop@{stop}}
+\index{stop@{stop}!state\_machine@{state\_machine}}
+\doxysubsubsection{\texorpdfstring{stop}{stop}}
+{\footnotesize\ttfamily int state\+\_\+machine.\+stop = 0}
+
+
+
+flag that indicates whether the robot has stopped or not in front of the ball 
+
+
+
+Definition at line 54 of file state\+\_\+machine.\+py.
+
 \mbox{\Hypertarget{namespacestate__machine_a8b1913f94c64745cffa6fd2062e38f74}\label{namespacestate__machine_a8b1913f94c64745cffa6fd2062e38f74}} 
 \index{state\_machine@{state\_machine}!VERBOSE@{VERBOSE}}
 \index{VERBOSE@{VERBOSE}!state\_machine@{state\_machine}}
@@ -119,7 +199,7 @@ Definition at line 52 of file state\+\_\+machine.\+py.
 
 
 
-Definition at line 56 of file state\+\_\+machine.\+py.
+Definition at line 59 of file state\+\_\+machine.\+py.
 
 \mbox{\Hypertarget{namespacestate__machine_a81ffbe3d9e69ff56cc9d640c6de7b832}\label{namespacestate__machine_a81ffbe3d9e69ff56cc9d640c6de7b832}} 
 \index{state\_machine@{state\_machine}!x@{x}}

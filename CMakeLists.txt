@@ -63,8 +63,10 @@ find_package (OpenCV REQUIRED)
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
+#add_service_files(
+   
+   #FILES
+   
 #   Service1.srv
 #   Service2.srv
 # )
@@ -179,6 +181,7 @@ include_directories(
  install(PROGRAMS
    scripts/go_to_point_ball.py
    scripts/state_machine.py
+   
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
@@ -215,6 +218,5 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
 
 

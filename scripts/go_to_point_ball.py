@@ -68,11 +68,12 @@ def go_straight_ahead(des_pos):
     global pub, state_, z_back,message
 
     
-    if des_pos.z >= 0 :
+    if des_pos.z >= 0 : #in case the ball appears in the arena
         message = "start play"
-        #pub_play.publish(message)
-    else :
-        message = "no ball"
+        ## publisher that publishes a message whenever is given the command for which the ball is in the arena
+        pub_start_play = rospy.Publisher("/ball/chatter",String, queue_size=10)
+        pub_start_play.publish(message)
+    
         
 
 

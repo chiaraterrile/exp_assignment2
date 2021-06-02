@@ -99,13 +99,14 @@ def callback_start_play(data):
 		
 
 def user_action():
-	"""! this function controls the next state of the FSM according to what it receives in the
+    """! this function controls the next state of the FSM according to what it receives in the
     flag_play, if the ball is in the arena the robot passes to the pay state, if not, it passes 
     the sleep state or normal in a randomic way. """		
+
     global flag_play 
-    
+
     sub_ball = rospy.Subscriber("/ball/chatter", String, callback_start_play)
-    
+
     if flag_play == 1 :
         
         return('play')
